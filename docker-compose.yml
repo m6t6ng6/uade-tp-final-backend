@@ -39,7 +39,7 @@ services:
     ports:
       - "8000:${APP_PORT}"
     volumes:
-      - ./:/home/node/app
+      #- ./:/home/node/app                      # en dev
       - ./uploads/:/home/node/app/uploads
     depends_on:
       - db
