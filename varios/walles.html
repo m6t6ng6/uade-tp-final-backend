@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Walles
+        </title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link rel="stylesheet" href="walles.css">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-xl-9 nombre">
+                    <p>WALLES <b class="eslogan"> For everyone </b></p>
+                </div>
+                <div class="col-xl-3 col-12 contacto">
+                    <button type="button"  class="btn btn-primary">Iniciar Sesion</button>
+                    <a class="registro" href="index.html">Registrarse</a>
+                    <button type="button" class="btn btn-primary">Ayuda</button>
+                    <a class="carrito" href="tucarrito.html">Tu carrito </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="offset-2 col-10">
+                        <div class="card perfil">
+                            <div class="card-body">
+                                 <h4 class="card-title">
+                                <img src="https://competenciasdelsiglo21.com/wp-content/uploads/2019/04/disc-perfil-c-azul-948x640.jpg " alt="Girl in a jacket" width="100" height="100">
+                                Usuario #4</h4>
+                                 <p id="descripcion" class="card-text"></p>
+                                 <a href="#" class="card-link">Contacto</a>
+                                 <a href="#" class="card-link">Mensajes</a>
+                                 <a href="#" class="card-link">Compras</a>
+                                 <a href="#" class="card-link">Cargar producto</a>
+                            </div>
+                        </div>
+                    </div><br>
+                    <div class="offset-2 col-10 filtros">
+                        <h5 class="widget-title">Categorias</h5>
+                        <a href="#" class="btn btn-primary Categorias" category="todos">Todos</a>
+                        <a href="#" class="btn btn-primary Categorias" category="muebleria">Muebleria</a>
+                        <a href="#" class="btn btn-primary Categorias" category="indumentaria">Indumentaria</a>
+                        <a href="#" class="btn btn-primary Categorias" category="electronica">Electronica</a>
+                        <a href="#" class="btn btn-primary Categorias" category="perfumeria">Perfumeria</a>
+
+                    </div>
+                    <div class="col-12">
+                        <!-- Carrito -->
+                        <aside class="col-7 offset-2">
+                            <h2>Carrito</h2>
+                            <!-- Elementos del carrito -->
+                            <ul id="carrito" class="list-group"></ul>
+                            <hr>
+                            <!-- Precio total -->
+                            <p class="text-right">Total: <span id="total"></span>&euro;</p>
+                            <button id="boton-vaciar" class="btn btn-danger">Vaciar</button>
+                            <button id="boton-comprar" class="btn btn-primary Categorias">Comprar</button>
+                        </aside>
+                    </div>
+                </div> 
+           
+                <div class="col-6 ">
+                    <!-- Elementos generados a partir del JSON -->
+                    <main id="items" class="col-sm-8 row"></main>
+                </div>
+                
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+
+                $('#boton-comprar').click(function(e){
+                    e.preventDefault();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://localhost:3005/productos/comprar',
+                        contentType: 'application/json',
+                        data: JSON.stringify(
+                            {
+                                nombre: $('.card-title').val(),
+                                precio:$('.card-text').val(),
+                                imagen:$('.img-fluid').val(),
+                                categoria: ''
+                            }
+                        )
+                    })
+
+                })
+
+            });
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="script.js">
+        </script>
+    </body>
+</html>

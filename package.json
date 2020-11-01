@@ -1,0 +1,44 @@
+{
+  "name": "whales-api-nodejs",
+  "version": "0.0.1",
+  "description": "whales-api-nodejs",
+  "author": "grupo-4 uade - diplomatura web 2020",
+  "license": "MIT",
+  "main": "app.js",
+  "scripts": {
+    "start": "webpack --watch --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "bootstrap",
+    "express"
+  ],
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "multer": "^1.4.2",
+    "mysql": "^2.18.1",
+    "node-cron": "^2.0.3",
+    "nodemailer": "^6.4.11",
+    "promise": "^8.1.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^8.5.1",
+    "dotenv": "^8.2.0",
+    "knex": "^0.21.7",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4",
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "babel-loader": "^8.1.0",
+    "eslint": "^7.12.0",
+    "nodemon-webpack-plugin": "^4.3.2",
+    "webpack": "^5.2.0",
+    "webpack-cli": "^4.1.0",
+    "webpack-node-externals": "^2.5.2"
+  }
+}
