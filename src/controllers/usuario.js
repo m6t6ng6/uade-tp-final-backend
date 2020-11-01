@@ -3,6 +3,38 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'; 
 const secreto = process.env.SECRET;  // SECRETO de BCRYPT
 
+export const getUserLogin = (req, res, next) => {
+  console.log("hola");
+  f.conectar_a_mysql();
+  f.conectar_a_base_de_datos('trabajo_final01');
+  let compararPass;
+  let acceder;
+  let tokenId;
+  const get_usuario = [ req.body.email, req.body.password ];
+  console.log(get_usuario);
+  const query = "SELECT * FROM usuarios WHERE email = ?;";
+  console.log({ query: query, variables: get_usuario });
+  //conexion.query(`SELECT * FROM trabajo_final01.usuarios WHERE
+  //email = ?`, [email], async function (error, result) {
+  f.query_a_base_de_datos(query, req.body.email, async function (error, result) {
+  if (error) throw error;
+    compararPass = await result[0].pass;
+    tokenId = await result[0].id_usuario;
+    acceder = await bcrypt.compare(req.body.password, compararPass);
+    console.log(acceder);
+    //res.send(acceder);
+  if (!acceder) { //if (acceder==false)
+    res.status(401).json({auth: false, token: null})
+  } else {
+    const token = jwt.sign({id: tokenId}, secreto, {
+      expiresIn: 60*6*2
+    });
+    res.json({auth: true, token: token})
+    console.log(token);
+    };
+  })
+}
+
 export const getAllUsers = (req, res) => {
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');
