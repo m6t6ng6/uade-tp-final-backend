@@ -21,7 +21,7 @@ services:
     restart: always
     container_name: node_whales
     hostname: node_whales
-    image: m6t6ng6/whales-uade-backend:0.1      # en prod
+    image: m6t6ng6/whales-uade-backend:0.2      # en prod
     #image: node:latest                         # en dev
     #command: npm start                         # en dev
     #working_dir: /home/node/app                # en dev
