@@ -5,6 +5,7 @@ const Promise = require('promise');   // paquete de promesas
 const express = require('express');
 const bodyParser = require('body-parser');
 const { inherits } = require('util');
+const bcrypt = require('bcryptjs');
 
 config = {
     host: process.env.MYSQL_HOST,
@@ -12,6 +13,14 @@ config = {
     user: process.env.MYSQL_ROOT_USER,
     password: process.env.MYSQL_ROOT_PASSWORD
 }
+
+async function validar_password(passwordEnviado, passwordDB) {
+    acceder = await bcrypt.compare(passwordEnviado, passwordDB);
+    if (!acceder) return false;
+    else return true;
+}
+
+module.exports.validar_password = validar_password;
 
 module.exports.conectar_a_mysql = () => {
     con = db.createConnection(config);

@@ -1,7 +1,7 @@
 // SOLO ENDPOINTS PARA LOS USUARIOS
 import { Router } from 'express';
 import multer from 'multer';
-import { getUserLogin, getAllUsers, getUserByEmail, getUserById, createUser, validateUser, updateUserById, deleteUserById } from '../controllers/usuario';
+import { getUserProfile, getUserLogin, getAllUsers, getUserByEmail, getUserById, createUser, validateUser, updateUserById, deleteUserById } from '../controllers/usuario';
 
 //
 //
@@ -35,14 +35,16 @@ const upload = multer({
 //
 //
 
+
 const router = Router();
 
-router.get( '/', getAllUsers );
-//router.get( '/:email', getUserByEmail );
-//router.get( '/:id', getUserById );
+router.get( '/profile', getUserProfile );
 router.get( '/login', getUserLogin );
+router.get( '/:email', getUserByEmail );
+router.get( '/:id', getUserById );
+router.get( '/', getAllUsers );
 router.post( '/', upload.single('imagen'), createUser );
-router.post(' /validacion', validateUser );
+router.post( '/validacion', validateUser );
 router.put( '/:id', updateUserById );
 router.delete( '/:id', deleteUserById );
 

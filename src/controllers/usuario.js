@@ -4,34 +4,56 @@ import jwt from 'jsonwebtoken';
 const secreto = process.env.SECRET;  // SECRETO de BCRYPT
 
 export const getUserLogin = (req, res, next) => {
-  console.log("hola");
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');
-  let compararPass;
-  let acceder;
-  let tokenId;
   const get_usuario = [ req.body.email, req.body.password ];
   console.log(get_usuario);
   const query = "SELECT * FROM usuarios WHERE email = ?;";
   console.log({ query: query, variables: get_usuario });
-  //conexion.query(`SELECT * FROM trabajo_final01.usuarios WHERE
-  //email = ?`, [email], async function (error, result) {
   f.query_a_base_de_datos(query, req.body.email, async function (error, result) {
   if (error) throw error;
-    compararPass = await result[0].pass;
-    tokenId = await result[0].id_usuario;
-    acceder = await bcrypt.compare(req.body.password, compararPass);
-    console.log(acceder);
-    //res.send(acceder);
+    let validacion = await result[0].codigo;
+    let acceder = await f.validar_password(await req.body.password, await result[0].pass);
+    let tokenId = await result[0].id_usuario;
   if (!acceder) { //if (acceder==false)
-    res.status(401).json({auth: false, token: null})
-  } else {
+    let msg = {auth: false, token: null, codigoValidacion: "Usuario validado previamente por código."}
+    console.log(msg);
+    res.status(401).json(msg);
+  } else if (acceder && validacion === 'validado') {
     const token = jwt.sign({id: tokenId}, secreto, {
-      expiresIn: 60*6*2
+      expiresIn: 60*60*2   // tiempo en segundos
     });
-    res.json({auth: true, token: token})
+    let msg = {status: 202, auth: true, token: token, codigoValidacion: "Usuario validado previamente por código."}
+    console.log(msg);
     console.log(token);
-    };
+    res.json(msg);
+  } else if (acceder && validacion != 'validado') {
+    let msg = {auth: false, token: null, codigoValidacion: "Usuario pendiente de validación por código."}
+    console.log(msg);
+    res.status(401).json(msg);
+  };
+  })
+}
+
+export const getUserProfile = async (req, res, next) => {
+  let token = req.headers['x-access-token'];
+  if (!token) {
+    msg = {
+      auth: false,
+      message: 'No has enviado un token'
+    }
+    console.log(msg);
+    return res.status(400).json(msg);
+  }
+  const decoded = jwt.verify(token, secreto);
+  console.log(decoded);
+  const query = "SELECT * FROM usuarios WHERE id_usuario = ?;";
+  console.log({ query: query, variables: { token: token, id_usuario: decoded.id } });
+  f.query_a_base_de_datos(query, decoded.id, async function (error, result) {
+    if (error) throw error;
+    let usuario = await result;
+    console.log(usuario);
+    res.status(202).json({ status: 202, token: token, message: "Autenticación correcta" });
   })
 }
 
@@ -117,17 +139,19 @@ export const validateUser = (req, res) => {
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');
   var fechaActual = new Date();     // fecha y hora de cuando se coloca el codigo recibido
-  var post_usuario = [ req.body.codigo, req.body.email, req.body.pass ];
-  query = "SELECT id_usuario, email, pass, imagen, codigo, codigo_validez FROM usuarios WHERE codigo = ? AND email = ? AND pass = ?;";
+  var post_usuario = [ req.body.codigo, req.body.email];
+  //var post_usuario = [ req.body.codigo, req.body.email, req.body.password ];
+  var query = "SELECT id_usuario, email, pass, imagen, codigo, codigo_validez FROM usuarios WHERE codigo = ? AND email = ?";
+  //var query = "SELECT id_usuario, email, pass, imagen, codigo, codigo_validez FROM usuarios WHERE codigo = ? AND email = ? AND pass = ?;";
   console.log({ query: query, variables: post_usuario });
-  f.select_a_base_de_datos(query, post_usuario)
-      .then(resultado => {
-          if ( resultado.length > 0 ) {
-              if ( resultado[0].codigo != "validado" && resultado[0].codigo === req.body.codigo && resultado[0].email === req.body.email && resultado[0].pass === req.body.pass ) {
+  f.query_a_base_de_datos(query, post_usuario, async function (error, resultado) {
+    let passValida = await f.validar_password(await req.body.password, await resultado[0].pass);
+    if ( resultado.length > 0 ) {
+      if ( resultado[0].codigo != "validado" && resultado[0].codigo === req.body.codigo && resultado[0].email === req.body.email && passValida ) {
                   var diff = (fechaActual - new Date(resultado[0].codigo_validez)) / (1000 * 60 * 60);    // coeficiente de diferencia entre fechas medido en horas (ej: 1.5 significa que paso 1 hora y media)
                   if ( diff < 12 ) {
-                      query = "UPDATE usuarios SET codigo = 'validado' WHERE id_usuario = " + resultado[0].id_usuario + ";";
-                      f.select_a_base_de_datos(query)
+                      var query = "UPDATE usuarios SET codigo = 'validado' WHERE id_usuario = " + resultado[0].id_usuario + ";";
+                      f.query_a_base_de_datos(query)
                           .then(resultado => {
                               var msg = { status: 202, msg: "usuario validado" };
                               var texto = "Tu código fue validado satisfactoriamente. Disfrutá comprar y vender en un sólo lugar rápido, fácil y seguro.";
@@ -138,10 +162,10 @@ export const validateUser = (req, res) => {
                   } else {   // si es mayor a 12 horas la introduccion del codigo, se crea un codigo nuevo y se envia nuevamente al cliente para que valide
                       var codigo = Math.random().toString(36).substring(2, 10);    // crea codigo de 8 caracteres aleatorios
                       var fechaCreacionCodigo = f.format_date();           // fecha en la que fue creado el codigo
-                      query = "UPDATE usuarios SET codigo = '" + codigo + "', codigo_validez = '" + fechaCreacionCodigo + "' WHERE id_usuario = " + resultado[0].id_usuario + ";";
-                      f.select_a_base_de_datos(query)
+                      var query = "UPDATE usuarios SET codigo = '" + codigo + "', codigo_validez = '" + fechaCreacionCodigo + "' WHERE id_usuario = " + resultado[0].id_usuario + ";";
+                      f.query_a_base_de_datos(query)
                           .then(resultado => {
-                              var msg = { status: 401, msg: "no autorizado" };
+                              var msg = { status: 401, msg: "no autorizado 3" };
                               var texto = "Bienvenido a Whales. Ingresá a http://whales.matanga.net.ar/validacion y pegá este código de validación para habilitar tu cuenta: " + codigo + ". Recordá que el código tiene validez por 12 horas.";
                               f.enviar_correo("Whales", req.body.email, "Bienvenido a Whales", texto);
                               console.log(msg);
@@ -149,12 +173,12 @@ export const validateUser = (req, res) => {
                           }, err => { res.status(500).json(err); console.log(err) });
                   }
               } else {
-                  var msg = { status: 401, msg: "no autorizado" };
+                  var msg = { status: 401, msg: "no autorizado 2" };
                   console.log(msg);
                   res.status(201).json(msg);
               }
           } else if ( resultado.length === 0 ) {
-              var msg = { status: 401, msg: "no autorizado" };
+              var msg = { status: 401, msg: "no autorizado 1" };
               console.log(msg);
               res.status(201).json(msg); 
           }
