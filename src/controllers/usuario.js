@@ -114,14 +114,13 @@ export const createUser = async (req, res, next) => {
   let passEncriptado = await bcrypt.hash(req.body.pass, 10);
   var post_usuario = [ req.body.apellido, req.body.ciudad, req.body.direccion, req.body.dni,
                        req.body.email, req.body.id_estado, req.body.id_provincia, req.body.nombre,
-                       passEncriptado, req.body.telefono, req.file.path, codigo, fechaCreacionCodigo ];
+                       passEncriptado, req.body.telefono, codigo, fechaCreacionCodigo ];//req.file.path, codigo, fechaCreacionCodigo ];
   var query = 
 "INSERT INTO usuarios (apellido, ciudad, direccion, dni, email, id_estado, \
-id_provincia, nombre, pass, telefono, imagen, codigo, codigo_validez) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+id_provincia, nombre, pass, telefono, codigo, codigo_validez) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";//imagen, codigo, codigo_validez) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
   console.log({ query: query, variables: post_usuario });
   f.query_a_base_de_datos(query, post_usuario, async function (error, result) {
       if (error) throw error;
-      //insertID = await result.insertId;
       const token = jwt.sign({id: result.insertId}, secreto, {
           expiresIn: 60*60*2 //tiempo en segundos
       });
