@@ -39,7 +39,7 @@ const upload = multer({
 const router = Router();
 
 router.get( '/profile', getUserProfile );
-router.get( '/login', getUserLogin );
+router.post( '/login', getUserLogin );
 router.get( '/:email', getUserByEmail );
 router.get( '/:id', getUserById );
 router.get( '/', getAllUsers );
