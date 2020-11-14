@@ -28,6 +28,22 @@ JOIN categorias c ON p.id_categoria = c.id_categoria ORDER BY hits_usuario DESC 
   f.desconectar_db();
 }
 
+export const getAllProductsByName = (req, res) => {
+  f.conectar_a_mysql();
+  f.conectar_a_base_de_datos('trabajo_final01');
+  var get_usuario = "%" + req.params.nombre.toString() + "%";
+  var query = 
+"SELECT id_producto, m.nombre AS 'marca', p.nombre AS 'nombre', \
+precio, c.nombre AS 'categoria', descripcion, hits_usuario, imagen \
+FROM productos p JOIN marcas m ON p.id_marca = m.id_marca \
+JOIN categorias c ON p.id_categoria = c.id_categoria WHERE p.nombre LIKE ?";
+      console.log("QUERY: [ " + query + " ], VARIABLES: [ " + get_usuario + " ]");
+      f.query_a_base_de_datos(query, get_usuario)
+          .then(resultado => res.status(200).json(resultado), err => console.log(err));
+  f.desconectar_db();
+}
+
+
 export const getProductById = (req, res) => {
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');

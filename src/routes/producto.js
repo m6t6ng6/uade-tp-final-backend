@@ -1,7 +1,7 @@
 // SOLO ENDPOINTS PARA LOS PRODUCTOS
 import { Router } from 'express';
 import multer from 'multer';
-import { addProduct, deleteProductById, getAllProducts, getProductById, getTop1000HitsProducts, updateProductHitsById, updateProductoById } from '../controllers/producto';
+import { addProduct, deleteProductById, getAllProducts, getProductById, getTop1000HitsProducts, updateProductHitsById, updateProductoById, getAllProductsByName } from '../controllers/producto';
 
 //
 //
@@ -38,11 +38,12 @@ const upload = multer({
 const router = Router();
 
 router.get( '/', getAllProducts );
-router.get( '/hits', getTop1000HitsProducts );
-router.get( '/:id', getProductById );
-router.put( '/:id/hits', updateProductHitsById );
-router.delete( '/:id', deleteProductById );
-router.post( '/', upload.single('imagen'), addProduct );
-router.put( '/:id', updateProductoById );
+router.get( '/:nombre', getAllProductsByName );
+//router.get( '/hits', getTop1000HitsProducts );
+//router.get( '/:id', getProductById );
+//router.put( '/:id/hits', updateProductHitsById );
+//router.delete( '/:id', deleteProductById );
+//router.post( '/', upload.single('imagen'), addProduct );
+//router.put( '/:id', updateProductoById );
 
 export default router;
