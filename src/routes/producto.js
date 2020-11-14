@@ -39,11 +39,11 @@ const router = Router();
 
 router.get( '/', getAllProducts );
 router.get( '/:nombre', getAllProductsByName );
-//router.get( '/hits', getTop1000HitsProducts );
-//router.get( '/:id', getProductById );
-//router.put( '/:id/hits', updateProductHitsById );
-//router.delete( '/:id', deleteProductById );
-//router.post( '/', upload.single('imagen'), addProduct );
-//router.put( '/:id', updateProductoById );
+router.get( '/hits', getTop1000HitsProducts );
+router.get( '/:id', getProductById );
+router.put( '/:id/hits', updateProductHitsById );
+router.delete( '/:id', deleteProductById );
+router.post( '/', upload.single('imagen'), addProduct );
+router.put( '/:id', updateProductoById );
 
 export default router;

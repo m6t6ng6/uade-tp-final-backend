@@ -43,7 +43,7 @@ router.post( '/login', getUserLogin );
 router.get( '/:email', getUserByEmail );
 router.get( '/:id', getUserById );
 router.get( '/', getAllUsers );
-router.post( '/', createUser );//upload.single('imagen'), createUser );
+router.post( '/', upload.single('imagen'), createUser );
 router.post( '/validacion', validateUser );
 router.put( '/:id', updateUserById );
 router.delete( '/:id', deleteUserById );
