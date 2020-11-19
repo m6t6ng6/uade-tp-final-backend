@@ -21,7 +21,7 @@ export const getUserLogin = (req, res, next) => {
     res.status(401).json(msg);
   } else if (acceder && validacion === 'validado') {
     const token = jwt.sign({id: tokenId}, secreto, {
-      expiresIn: 60*60*2   // tiempo en segundos
+      expiresIn: 60*60*12   // tiempo en segundos
     });
     let msg = {status: 202, auth: true, token: token, codigoValidacion: "Usuario validado previamente por código."}
     console.log(msg);
@@ -53,7 +53,7 @@ export const getUserProfile = async (req, res, next) => {
     if (error) throw error;
     let usuario = await result;
     console.log(usuario);
-    res.status(202).json({ status: 202, token: token, message: "Autenticación correcta" });
+    res.status(202).json({ status: 202, token: token, data: usuario, message: "Autenticación correcta" });
   })
 }
 
@@ -122,7 +122,7 @@ id_provincia, nombre, pass, telefono, codigo, codigo_validez) VALUES (?, ?, ?, ?
   f.query_a_base_de_datos(query, post_usuario, async function (error, result) {
       if (error) throw error;
       const token = jwt.sign({id: result.insertId}, secreto, {
-          expiresIn: 60*60*2 //tiempo en segundos
+          expiresIn: 60*60*12 //tiempo en segundos
       });
       var msg = { auth: true, token: token, status: "201", msg: "usuario creado correctamente", affectedRows: result.affectedRows, insertId: result.insertId };
       console.log(msg);
