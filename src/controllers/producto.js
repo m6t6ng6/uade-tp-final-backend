@@ -94,10 +94,51 @@ export const deleteProductById = (req, res) => {
   f.desconectar_db();
 }
 
-export const addProduct = (req, res) => {
+
+export const addProduct = async (req, res) => {
+  const util = require('util');
+  const db = require('mysql');
+  const host = process.env.MYSQL_HOST;
+  const nombre_de_base_de_datos = 'trabajo_final01';
+  const con = db.createConnection(config);
+  // node native promisify
+  const query = util.promisify(con.query).bind(con);
+
+  con.connect(err => {
+      if (err) throw err;
+      console.log("Conectado a la base de datos " + host + ".");
+  });
+
+  con.changeUser({database: nombre_de_base_de_datos}, err => {
+    if (err) throw err;
+    console.log("Cambio a base de datos: '" + nombre_de_base_de_datos + "'.") 
+  });
+ 
+  var post_usuario = [ req.body.nombre, req.body.id_categoria, req.body.id_marca, req.body.precio, req.body.descripcion, req.file.path ];
+  var query1 = "INSERT INTO productos (nombre, id_categoria, id_marca, precio, descripcion, imagen) VALUES (?, ?, ?, ?, ?, ?);";
+  
+  const resultado = await query(query1, post_usuario);
+
+  var post_usuario2 = [ req.body.id_usuario, resultado.insertId, req.body.cantidad ];
+  var query2 = "INSERT INTO productos_usuarios (id_usuario, id_producto, cantidad) VALUES (?, ?, ?);";
+
+  const resultado2 = await query(query2, post_usuario2);
+
+  const msg = {estado: 201, id_usuario: Number(req.body.id_usuario), id_producto: resultado.insertId, mensaje: "Producto creado correctamente"}
+
+  console.log(msg);
+
+  res.status(201).json(msg);
+}
+
+
+
+export const addProductOriginal = (req, res) => {     // NO USAR
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');
   console.log(req.file);
+  //const id_usuario = req.body.id_usuario;
+  //const cantidad = req.body.cantidad;
   var post_usuario = [ req.body.nombre, req.body.id_categoria, req.body.id_marca, req.body.precio, req.body.descripcion, req.file.path ];
   var query = "INSERT INTO productos (nombre, id_categoria, id_marca, precio, descripcion, imagen) VALUES (?, ?, ?, ?, ?, ?);";
   console.log("QUERY: [ " + query + " ], VARIABLES: [ " + post_usuario + " ]");
@@ -105,6 +146,9 @@ export const addProduct = (req, res) => {
       .then(resultado => { var msg = 
 "OK: [ msg: producto ingresado correctamente, affectedRows: \
 " + resultado.affectedRows + ", insertId: " + resultado.insertId + " ]";
+      //post_usuario2 = [id_usuario, resultado.insertId, cantidad];
+      //var query2 = "INSERT INTO productos_usuarios (id_usuario, id_producto, cantidad) VALUES (?, ?, ?);";
+      //  .then(resultado2 => console.log(resultado2))
       console.log(msg);
       res.status(201).json(msg);
       }, err => console.log(err))
