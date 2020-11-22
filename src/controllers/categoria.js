@@ -26,3 +26,32 @@ export const getCategoryById = (req, res) => {
   }
   f.desconectar_db();
 }
+
+export const createCategory = (req, res) => {
+  f.conectar_a_mysql();
+  f.conectar_a_base_de_datos('trabajo_final01');
+  const post_usuario = [ req.body.nombre ];
+  var query = "INSERT INTO categorias (nombre) VALUES (?);";
+  console.log("QUERY: [ " + query + " ]");
+  f.query_a_base_de_datos(query, post_usuario)
+  .then(resultado => {
+    const msg = {estado: 201, id_categoria: resultado.insertId, nombre: req.body.nombre, mensaje: "Categoría añadida correctamente"}
+    res.status(200).json(msg)}, err => console.log(err)
+    );
+    f.desconectar_db();
+  }
+
+  export const deleteCategoryById = (req, res) => {
+    f.conectar_a_mysql();
+    f.conectar_a_base_de_datos('trabajo_final01');
+    var del_usuario = parseInt(req.params.id);
+    var query = "DELETE FROM categorias WHERE id_categoria = ?;"
+    console.log("QUERY: [ " + query + " ]");
+    f.query_a_base_de_datos(query, del_usuario)
+        .then(resultado => {
+          const msg = {estado: 204, id_categoria: del_usuario, mensaje: "Categoría eliminada correctamente"}
+          res.status(204).json(msg)}, err => console.log(err)
+        );
+    f.desconectar_db();
+  }
+  

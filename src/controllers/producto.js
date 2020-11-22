@@ -132,29 +132,6 @@ export const addProduct = async (req, res) => {
 }
 
 
-
-export const addProductOriginal = (req, res) => {     // NO USAR
-  f.conectar_a_mysql();
-  f.conectar_a_base_de_datos('trabajo_final01');
-  console.log(req.file);
-  //const id_usuario = req.body.id_usuario;
-  //const cantidad = req.body.cantidad;
-  var post_usuario = [ req.body.nombre, req.body.id_categoria, req.body.id_marca, req.body.precio, req.body.descripcion, req.file.path ];
-  var query = "INSERT INTO productos (nombre, id_categoria, id_marca, precio, descripcion, imagen) VALUES (?, ?, ?, ?, ?, ?);";
-  console.log("QUERY: [ " + query + " ], VARIABLES: [ " + post_usuario + " ]");
-  f.query_a_base_de_datos(query, post_usuario)
-      .then(resultado => { var msg = 
-"OK: [ msg: producto ingresado correctamente, affectedRows: \
-" + resultado.affectedRows + ", insertId: " + resultado.insertId + " ]";
-      //post_usuario2 = [id_usuario, resultado.insertId, cantidad];
-      //var query2 = "INSERT INTO productos_usuarios (id_usuario, id_producto, cantidad) VALUES (?, ?, ?);";
-      //  .then(resultado2 => console.log(resultado2))
-      console.log(msg);
-      res.status(201).json(msg);
-      }, err => console.log(err))
-  f.desconectar_db();
-}
-
 export const updateProductoById = (req, res) => {
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');

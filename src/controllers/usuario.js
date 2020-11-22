@@ -129,7 +129,7 @@ export const createUser = async (req, res, next) => {
                        passEncriptado, req.body.telefono, codigo, fechaCreacionCodigo ];//req.file.path, codigo, fechaCreacionCodigo ];
   var query = 
 "INSERT INTO usuarios (apellido, ciudad, direccion, dni, email, id_estado, \
-id_provincia, nombre, pass, telefono, codigo, codigo_validez) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";//imagen, codigo, codigo_validez) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+id_provincia, nombre, pass, telefono, imagen, codigo, codigo_validez) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
   console.log({ query: query, variables: post_usuario });
   f.query_a_base_de_datos(query, post_usuario, async function (error, result) {
       if (error) throw error;
