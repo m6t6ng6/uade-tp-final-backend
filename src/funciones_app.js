@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const { inherits } = require('util');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { decode } = require('punycode');
 const secreto = process.env.SECRET;  // SECRETO de BCRYPT
 
 config = {
@@ -169,7 +170,7 @@ async function decodeId(headers) {
       return res.status(400).json(msg);
     } else {
         const decoded = await jwt.verify(token, secreto);
-        console.log(decoded);
+        var msg = { token: token, id_usuario: decoded.id}
         return decoded.id
     }
 }

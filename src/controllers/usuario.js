@@ -3,6 +3,30 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'; 
 const secreto = process.env.SECRET;  // SECRETO de BCRYPT
 
+
+export const mostrarCompras = async (req, res) => {
+  f.conectar_a_mysql();
+  f.conectar_a_base_de_datos('trabajo_final01');
+  const id_usuario = await f.decodeId(req.headers);
+  console.log(id_usuario);
+  const query = "SELECT d.nombre AS Producto, d.descripcion AS DescProduct, importe, \
+  id_vendedor, f.nombre AS NombreVendedor, f.apellido AS ApellidoVendedor, \
+  d.imagen AS imagenProducto, b.fecha \
+  FROM trabajo_final01.usuarios a \
+  JOIN trabajo_final01.operaciones b ON a.id_usuario = b.id_comprador \
+  JOIN trabajo_final01.usuarios f ON f.id_usuario = b.id_vendedor \
+  JOIN trabajo_final01.productos_operaciones c ON b.id_operacion = c.id_operacion \
+  JOIN trabajo_final01.productos d ON c.id_producto = d.id_producto \
+  WHERE a.id_usuario = ?;";
+  console.log({ query: query, variables: { id_usuario: id_usuario } });
+  f.query_a_base_de_datos(query, id_usuario, async function (error, result) {
+    if (error) throw error;
+    let datos_usuario = await result;
+    console.log(datos_usuario);
+    res.status(200).json({ status: 200, data: datos_usuario, message: "Listado de compras del usuario." });
+  }) 
+}
+
 export const getUserLogin = (req, res, next) => {
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');
@@ -36,17 +60,7 @@ export const getUserLogin = (req, res, next) => {
 }
 
 export const getUserProfile = async (req, res, next) => {
-  let token = req.headers['x-access-token'];
-  if (!token) {
-    msg = {
-      auth: false,
-      message: 'No has enviado un token'
-    }
-    console.log(msg);
-    return res.status(400).json(msg);
-  }
-  const decoded = jwt.verify(token, secreto);
-  console.log(decoded);
+  const id_usuario = await f.decodeId(req.headers);
   const query = "SELECT a.nombre, apellido, direccion, ciudad, e.nombre AS provincia, telefono, email, \
   a.imagen AS imagenUsuario, c.descripcion AS descripcionProducto, c.nombre AS nombreProducto, c.imagen AS imagenProducto, precio, cantidad \
   FROM trabajo_final01.usuarios a \
@@ -59,12 +73,12 @@ export const getUserProfile = async (req, res, next) => {
   JOIN trabajo_final01.provincias e \
   ON a.id_provincia = e.id_provincia \
   WHERE a.id_usuario = ?;";
-  console.log({ query: query, variables: { token: token, id_usuario: decoded.id } });
-  f.query_a_base_de_datos(query, decoded.id, async function (error, result) {
+  console.log({ query: query, variables: { id_usuario: id_usuario } });
+  f.query_a_base_de_datos(query, id_usuario, async function (error, result) {
     if (error) throw error;
-    let usuario = await result;
-    console.log(usuario);
-    res.status(202).json({ status: 202, token: token, data: usuario, message: "Autenticación correcta" });
+    let datos_usuario = await result;
+    console.log(datos_usuario);
+    res.status(202).json({ status: 202, data: datos_usuario, message: "Autenticación correcta" });
   })
 }
 

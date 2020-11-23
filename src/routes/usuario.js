@@ -1,7 +1,7 @@
 // SOLO ENDPOINTS PARA LOS USUARIOS
 import { Router } from 'express';
 import multer from 'multer';
-import { getUserProfile, getUserLogin, getAllUsers, getUserByEmail, getUserById, createUser, validateUser, updateUserById, deleteUserById } from '../controllers/usuario';
+import { getUserProfile, getUserLogin, getAllUsers, getUserByEmail, getUserById, createUser, validateUser, updateUserById, deleteUserById, mostrarCompras } from '../controllers/usuario';
 
 //
 //
@@ -40,6 +40,7 @@ const router = Router();
 
 router.get( '/profile', getUserProfile );
 router.post( '/login', getUserLogin );
+router.get( '/mostrarCompras', mostrarCompras );
 router.get( '/:email', getUserByEmail );
 router.get( '/:id', getUserById );
 router.get( '/', getAllUsers );

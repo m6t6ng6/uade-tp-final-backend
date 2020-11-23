@@ -129,6 +129,8 @@ export const addProduct = async (req, res) => {
   console.log(msg);
 
   res.status(201).json(msg);
+
+  f.desconectar_db();
 }
 
 
