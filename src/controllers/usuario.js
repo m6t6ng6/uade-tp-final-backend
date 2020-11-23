@@ -126,7 +126,7 @@ export const createUser = async (req, res, next) => {
   let passEncriptado = await bcrypt.hash(req.body.pass, 10);
   var post_usuario = [ req.body.apellido, req.body.ciudad, req.body.direccion, req.body.dni,
                        req.body.email, req.body.id_estado, req.body.id_provincia, req.body.nombre,
-                       passEncriptado, req.body.telefono, codigo, fechaCreacionCodigo ];//req.file.path, codigo, fechaCreacionCodigo ];
+                       passEncriptado, req.body.telefono, req.file.path, codigo, fechaCreacionCodigo ];
   var query = 
 "INSERT INTO usuarios (apellido, ciudad, direccion, dni, email, id_estado, \
 id_provincia, nombre, pass, telefono, imagen, codigo, codigo_validez) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
