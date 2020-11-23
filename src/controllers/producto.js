@@ -149,3 +149,21 @@ export const updateProductoById = (req, res) => {
           }, err => console.log(err))
   f.desconectar_db();
 }
+
+export const operacionCompra = async (req, res) => {
+  f.conectar_a_mysql();
+  f.conectar_a_base_de_datos('trabajo_final01');
+  const id_comprador = await f.decodeId(req.headers);
+  //console.log(id_comprador);
+  var post_usuario = [ req.body.importe, id_comprador, req.body.id_vendedor, 1 ];
+  var query = "INSERT INTO operaciones (fecha, importe, id_comprador, id_vendedor, id_pago ) \
+  VALUES (NOW(), ?, ?, ?, ?);";
+  console.log("QUERY: [ " + query + " ], VARIABLES: [ " + post_usuario + " ]");
+  f.query_a_base_de_datos(query, post_usuario)
+    .then(resultado => {
+      var msg = {id_operacion: resultado.insertId, id_comprador: id_comprador, id_vendedor: id_vendedor, mensaje: "Compra procesada."}
+      console.log(msg);
+      res.status(201).json(msg);
+      }, err => console.log(err))
+  f.desconectar_db();
+}

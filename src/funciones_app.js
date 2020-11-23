@@ -6,6 +6,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { inherits } = require('util');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const secreto = process.env.SECRET;  // SECRETO de BCRYPT
 
 config = {
     host: process.env.MYSQL_HOST,
@@ -154,3 +156,22 @@ module.exports.enviar_correo = (from_string, to_string, asunto, texto) => {
         }
     });
 }
+
+async function decodeId(headers) {
+    //let token = req.headers['x-access-token'];
+    let token = headers['x-access-token'];
+    if (!token) {
+      msg = {
+        auth: false,
+        message: 'No has enviado un token'
+      }
+      console.log(msg);
+      return res.status(400).json(msg);
+    } else {
+        const decoded = await jwt.verify(token, secreto);
+        console.log(decoded);
+        return decoded.id
+    }
+}
+
+module.exports.decodeId = decodeId;

@@ -47,7 +47,6 @@ export const getUserProfile = async (req, res, next) => {
   }
   const decoded = jwt.verify(token, secreto);
   console.log(decoded);
-  //const query = "SELECT * FROM usuarios WHERE id_usuario = ?;";
   const query = "SELECT a.nombre, apellido, direccion, ciudad, e.nombre AS provincia, telefono, email, \
   a.imagen AS imagenUsuario, c.descripcion AS descripcionProducto, c.nombre AS nombreProducto, c.imagen AS imagenProducto, precio, cantidad \
   FROM trabajo_final01.usuarios a \
