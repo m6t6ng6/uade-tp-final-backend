@@ -9,7 +9,7 @@ export const mostrarCompras = async (req, res) => {
   f.conectar_a_base_de_datos('trabajo_final01');
   const id_usuario = await f.decodeId(req.headers);
   console.log(id_usuario);
-  const query = "SELECT d.nombre AS Producto, d.descripcion AS DescProduct, importe, \
+  const query = "SELECT d.id_producto, d.nombre AS Producto, d.descripcion AS DescProduct, importe, \
   id_vendedor, f.nombre AS NombreVendedor, f.apellido AS ApellidoVendedor, \
   d.imagen AS imagenProducto, b.fecha \
   FROM trabajo_final01.usuarios a \
