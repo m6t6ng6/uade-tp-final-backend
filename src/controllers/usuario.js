@@ -59,7 +59,61 @@ export const getUserLogin = (req, res, next) => {
   })
 }
 
-export const getUserProfile = async (req, res, next) => {
+export const getUserProfile = async (req, res) => {
+  const util = require('util');
+  const db = require('mysql');
+  const host = process.env.MYSQL_HOST;
+  const nombre_de_base_de_datos = 'trabajo_final01';
+  const con = db.createConnection(config);
+  // node native promisify
+  const query = util.promisify(con.query).bind(con);
+
+  con.connect(err => {
+      if (err) throw err;
+      console.log("Conectado a la base de datos " + host + ".");
+  });
+
+  con.changeUser({database: nombre_de_base_de_datos}, err => {
+    if (err) throw err;
+    console.log("Cambio a base de datos: '" + nombre_de_base_de_datos + "'.") 
+  });
+ 
+  const id_usuario = await f.decodeId(req.headers);
+
+  const query1 = "SELECT id_usuario, u.nombre, apellido, email, dni, \
+  ciudad, direccion, estado, p.nombre AS 'provincia', pass, telefono, imagen \
+  FROM usuarios u JOIN estados e ON u.id_estado = e.id_estado \
+  JOIN provincias p ON u.id_provincia = p.id_provincia WHERE id_usuario = ?";
+  console.log({ query: query1, variables: { id_usuario: id_usuario } });
+  const resultado1 = await query(query1, id_usuario);
+
+  const query2 = "SELECT a.nombre, apellido, direccion, ciudad, e.nombre AS provincia, telefono, email, \
+  a.imagen AS imagenUsuario, c.descripcion AS descripcionProducto, c.nombre AS nombreProducto, c.imagen AS imagenProducto, precio, cantidad \
+  FROM trabajo_final01.usuarios a \
+  LEFT JOIN trabajo_final01.productos_usuarios b \
+  ON a.id_usuario = b.id_usuario \
+  JOIN trabajo_final01.productos c \
+  ON b.id_producto = c.id_producto \
+  JOIN trabajo_final01.marcas d \
+  ON c.id_marca = d.id_marca \
+  JOIN trabajo_final01.provincias e \
+  ON a.id_provincia = e.id_provincia \
+  WHERE a.id_usuario = ?;";
+  console.log({ query: query2, variables: { id_usuario: id_usuario } });
+  const resultado2 = await query(query2, id_usuario);
+
+  const msg = {estado: 201, info_usuario: resultado1, data_productos: resultado2}
+
+  console.log(msg);
+
+  res.status(201).json(msg);
+
+  f.desconectar_db();
+}
+
+
+
+export const getUserProfileOriginal = async (req, res, next) => {
   const id_usuario = await f.decodeId(req.headers);
   const query = "SELECT a.nombre, apellido, direccion, ciudad, e.nombre AS provincia, telefono, email, \
   a.imagen AS imagenUsuario, c.descripcion AS descripcionProducto, c.nombre AS nombreProducto, c.imagen AS imagenProducto, precio, cantidad \

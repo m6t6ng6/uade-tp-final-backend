@@ -21,10 +21,10 @@ services:
     restart: always
     container_name: node_whales
     hostname: node_whales
-    image: m6t6ng6/whales-uade-backend:0.14      # en prod
-    #image: node:latest                         # en dev
-    #command: npm start                         # en dev
-    #working_dir: /home/node/app                # en dev
+    #image: m6t6ng6/whales-uade-backend:0.14      # en prod
+    image: node:latest                         # en dev
+    command: npm start                         # en dev
+    working_dir: /home/node/app                # en dev
     environment:
       - MAIL_USER=${MAIL_USER}
       - MAIL_PASS=${MAIL_PASS}
@@ -39,7 +39,7 @@ services:
     ports:
       - "8000:${APP_PORT}"
     volumes:
-      #- ./:/home/node/app                      # en dev
+      - ./:/home/node/app                      # en dev
       - ./uploads/:/home/node/app/uploads
     depends_on:
       - db
