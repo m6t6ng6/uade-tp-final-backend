@@ -87,7 +87,7 @@ export const getUserProfile = async (req, res) => {
   console.log({ query: query1, variables: { id_usuario: id_usuario } });
   const resultado1 = await query(query1, id_usuario);
 
-  const query2 = "SELECT a.nombre, apellido, direccion, ciudad, e.nombre AS provincia, telefono, email, \
+  const query2 = "SELECT c.id_producto, a.nombre, apellido, direccion, ciudad, e.nombre AS provincia, telefono, email, \
   a.imagen AS imagenUsuario, c.descripcion AS descripcionProducto, c.nombre AS nombreProducto, c.imagen AS imagenProducto, precio, cantidad \
   FROM trabajo_final01.usuarios a \
   LEFT JOIN trabajo_final01.productos_usuarios b \
