@@ -4,10 +4,18 @@ export const getAllProducts = (req, res) => {
   f.conectar_a_mysql();
   f.conectar_a_base_de_datos('trabajo_final01');
   var query = 
-"SELECT id_producto, m.nombre AS 'marca', p.nombre AS 'nombre', \
-precio, c.nombre AS 'categoria', descripcion, hits_usuario, imagen \
-FROM productos p JOIN marcas m ON p.id_marca = m.id_marca \
-JOIN categorias c ON p.id_categoria = c.id_categoria ORDER BY id_producto;";
+//"SELECT id_producto, m.nombre AS 'marca', p.nombre AS 'nombre', \
+//precio, c.nombre AS 'categoria', descripcion, hits_usuario, imagen \
+//FROM productos p JOIN marcas m ON p.id_marca = m.id_marca \
+//JOIN categorias c ON p.id_categoria = c.id_categoria ORDER BY id_producto;";
+"SELECT p.id_producto, m.nombre AS ‘marca’, p.nombre AS ‘nombre’, \
+precio, c.nombre AS ‘categoria’, descripcion, hits_usuario, p.imagen, \
+u.nombre AS NombreUsuario, u.apellido AS ApellidoUsuario, u.id_usuario AS IdUsuario \
+FROM trabajo_final01.productos p JOIN trabajo_final01.marcas m ON p.id_marca = m.id_marca \
+JOIN categorias c ON p.id_categoria = c.id_categoria \
+JOIN trabajo_final01.productos_usuarios pu ON p.id_producto = pu.id_producto \
+JOIN trabajo_final01.usuarios u ON pu.id_usuario = u.id_usuario \
+ORDER BY id_producto;";
   console.log("QUERY: [ " + query + " ]");
   f.query_a_base_de_datos(query)
       .then(resultado => res.status(200).json(resultado), err => console.log(err));
